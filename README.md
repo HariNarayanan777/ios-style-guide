@@ -22,6 +22,7 @@ Some references to the "Official" Documentation. We follow recommendations here 
 
 
 ## Naming
+- *Needs Owner*
 - Verbosity
 - Return time and inputs should be obvious
 - Properties, put nonatomic and strong even if default
@@ -68,14 +69,12 @@ Indent using 4 spaces. Avoid Tabs (change this preference in Xcode, otherwise yo
 > There should be no spaces within the return type (void), or between the type and the method name.
 
 ## Structure / Grouping Code
-- TBD
+- *Needs Owner*
 - Keep like methods together, in an expected order (inits at the top, deallocs there as well, all view helpers together)
 - Group and separate code areas with `#pragma` marks
 
 ## Conditionals
-
-TBD
-
+- *Needs Owner*
 - Braces on same line
 - Proper spacing before ()
 - Don't compare against nil, or 0
@@ -185,7 +184,6 @@ Prefer `NSInteger` over `int`, and `CGFloat` over `float`. When applicable, pref
 
 
 ## Enums
-
 Use `NS_ENUM` where possible (and NS_Option)
 
 In Switch-Case statements, avoid the use of default. By avoiding you will receive warnings when you forget to support a value in the enum, which can help to future-proof your code if someone adds a new value. In many cases, you can remove the default case and instead return the value later in the method
@@ -247,12 +245,16 @@ When creating singletons, be thread-safe and use `dispatch_once`
 
 
 ## Blocks
-Prefer Weak references in blocks, this avoids potential future retain cycles, but also it's very rare we ever want to reference/update anything if it has become nil;
+*Needs Owner*
+
+- Prefer Weak references in blocks, this avoids potential future retain cycles, but also it's very rare we ever want to reference/update anything if it has become nil;
 
 ## Exceptions and Errors
+*Needs Owner*
 - Check return over value of error object. use NSException to indicate programmer errors, use NSError to indicate other unexpected errors.
 
 ## Categories
+*Needs Owner*
 - Use categories for helper methods on models (keep models clean)
 
 
