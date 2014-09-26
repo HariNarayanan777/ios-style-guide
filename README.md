@@ -21,30 +21,41 @@ Some references to the "Official" Documentation. We follow recommendations here 
 * [Literals](#literals)
 
 
-## Naming
+## Misc (need a home)
+- Prefer `@class` over `#import` when possible.
+- Remove methods that simply just call `super`. They are superfluous.
+- Avoid `NSLog`, prefer `RKLog` instead.
+
+
+## Organization and Organization
 - **Needs Owner**
-- Verbosity
-- Return time and inputs should be obvious
-- Properties, put nonatomic and strong even if default
 
+All public methods and functions should have documentation on use, parameters, return values. Use `#pragma mark` to group like pieces of code and protocol code. `init` and `dealloc` methods belong at the top.
 
-## Properties and Methods
+Define constants at the top of the file so that they are together in a single place.
 
-Prefer dot-notation for getting and setting properties of objects. Use brackets for methods.
+Where possible, order methods in a reasonable expected resembleing the life cycle
 
-**Example**
+** Example **
 
 ```objc
 
-```
+- (NSUInteger)numberOfSections;
 
-> One benefit of keeping style different for properties and methods is that it makes it more obvious how the messages are sent.
+- (NSUInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSUInteger)section;
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath)indexPath;
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath)indexPath;
+```
 
 
 ## Spacing
 Take advantage of spaces to improve readability, follow Apple examples where available.
 
-Indent using 4 spaces. Avoid Tabs (change this preference in Xcode, otherwise you will have to deal with strange merge conflicts and misaligned code reviews)
+Include line breaks between methods to improve readability (2).
+
+**Indent using 4 spaces. Avoid Tabs** (change this preference in Xcode, otherwise you will have to deal with strange merge conflicts and misaligned code reviews)
 
 **Example**
 
@@ -68,15 +79,89 @@ Indent using 4 spaces. Avoid Tabs (change this preference in Xcode, otherwise yo
 > The -/+ should be the first character of the line, followed by a space. 
 > There should be no spaces within the return type (void), or between the type and the method name.
 
-## Structure / Grouping Code
-- **Needs Owner**
-- Keep like methods together, in an expected order (inits at the top, deallocs there as well, all view helpers together)
-- Group and separate code areas with `#pragma` marks
 
-## Conditionals
-- **Needs Owner**
-- Braces on same line
-- Proper spacing before ()
+Include spaces around operators, after commas, and where it improves readability
+
+**Example**
+
+```objc
+NSUInteger number = (1 + 2) * 3;
+NSArray *array = @[@"one", @"two", @"three"];
+BOOL isNegative = number >= 0 ? NO : YES;
+
+
+```
+
+
+
+
+## Naming
+- Adhere to Apple conventions for naming (explicit, informative, aka "verbose")
+- Return types and input types should be obvious from naming. 
+- Prefix Classes with `TA`, `TAC` (commons), `TAF` (flights) (and methods and constants where needed).
+- Avoid abbreviations other than common ones (num, max, min).
+
+## Properties and Methods
+
+- Use `copy` for types with mutable options (ie NSArray, NSDictionary, NSString). Protect yourself against the wrong type being passed in.
+- Expose the immutable type when possible.
+- Make use of `readonly` where applicable to force immutability
+- Explicitly include `strong` identifier even though it is default. Be explicit. 
+- Use `instancetype` over `id` for constructors.
+- include `is`, `has`, etc. for `BOOL` getters.
+
+
+**Example**
+
+```objc
+@property (nonatomic, assign, getter=isSaved) BOOL saved;
+
+```
+
+
+Prefer dot-notation for getting and setting properties of objects. Use brackets for methods.
+
+**Example**
+
+```objc
+
+```
+
+> One benefit of keeping style different for properties and methods is that it makes it more obvious how the messages are sent.
+
+
+
+
+## Control Structures
+- Always include a space after control structure, before (
+- Braces start on same line, end on a new line.
+- Return early. Prefer a negative condition to return over several layers of nested `if` when possible
+- No spaces between parenthesis and their contents inside.
+
+** Prefer **
+```objc
+- (void)preformSomeMethodWithString:(NSString *)string {
+    if (!string.length) return;
+    
+    // do other code here that may be more complex
+}
+```
+
+** Over ** 
+```objc
+- (void)preformSomeMethodWithString:(NSString *)string {
+    if (string.length) {
+    
+        if (another expression) {
+            // do other code here that may be more complex
+        }
+    }
+}
+```
+
+
+### If / Else
+
 - Don't compare against nil, or 0
 - for strings, arrays, check length count
 - For short statements, keep simple w/ 1 line (but avoid lacking braces and putting result on a separate line)
@@ -88,7 +173,7 @@ Indent using 4 spaces. Avoid Tabs (change this preference in Xcode, otherwise yo
     
     if (input.length) {
         
-    } else if () {
+    } else if ([array count]) {
         
     } else {
         
@@ -98,10 +183,69 @@ Indent using 4 spaces. Avoid Tabs (change this preference in Xcode, otherwise yo
 
 ```
 
+### Switch
+Include braces around cases.
+
+Avoid the use of `default` when dealing with `ENUMs`. By avoiding you will receive warnings when you forget to support a value in the enum, which can help to future-proof your code if someone adds a new value. Instead, group cases together and handle default case explicitly there.
+
+I
+
+**Example**
+
+```objc
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+
+    UITableViewCell *cell = nil;
+    switch (indexPath.section) {
+        
+        case TAPOIDetailsSectionHeader: 
+        case TAPOIDetailsSectionSubHeader: {
+            cell = [TAResultsCell headerCell];
+            break;
+        }
+        
+        case TAPOIDetailsSectionName: {
+            cell = [TAResultsCell sectionNameCell];
+            break;
+        }
+            
+        case TAPOIDetailsSectionOverview: {
+            cell = [TAResultsCell overviewCell];
+            break;
+        }
+        
+        // explicitly handle other cases rather than relying on default.
+        case TAPOIDetailsSectionUnsupported:
+        case TAPOIDetailsSectionUnsupportedAgain: {
+            break;
+        }
+        
+        // warning: Enumeration values 'TAPOIDetailsSectionNew' and 'TAPOIDetailsSectionUnsupported' not handled in switch
+    }
+            
+    if (!cell) {
+        cell = [TAResultsCell defaultCell];
+    }
+    
+    return cell
+}
+
+### For / While 
+
+Prefer fast enumueration where possible
+
+```objc
+for (TAReview *review in location.reviews) {
+    // do stuff here
+}
+````
+
 
 
 ## Literals
-Prefer literals where you can for `arrays`, `dictionaries`, and `NSNumbers`. Be careful about accidental nil inserts that can cause crashes
+Prefer literals where you can for `arrays`, `dictionaries`, and `NSNumbers`. Be careful about accidental nil inserts that can cause crashes.
+
+For dictionaries, no space between " and : in key, include a space after : before value.
 
 **Example**
 
@@ -118,6 +262,8 @@ NSUInteger number = 100;
 ## Ternary Operator
 
 Take advantage of the simplicity of the Ternary Operator, but don't get too complicated. Be nice to future programmers who will try to quickly understand your work. If it takes more then 2 seconds to understand the logic, use an if statement instead. Clarity > lines of code.
+
+Wrap long lines in parenthesis to improve clarity.
 
 **Example**
 
@@ -180,45 +326,13 @@ static const CGFLoat kTAExamplePrivateConstant = 10.5;
 
 Prefer `NSInteger` over `int`, and `CGFloat` over `float`. When applicable, prefer `NSUInteger` over `NSInteger`
 
-
+Prefer `typedef` when applicable, such as `NSTimeInterval` over `double`.
 
 
 ## Enums
 Use `NS_ENUM` where possible (and NS_Option)
 
-In Switch-Case statements, avoid the use of default. By avoiding you will receive warnings when you forget to support a value in the enum, which can help to future-proof your code if someone adds a new value. In many cases, you can remove the default case and instead return the value later in the method
 
-**Example**
-
-```objc
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-
-    UITableViewCell *cell = nil;
-    switch (indexPath.section) {
-        case TAPOIDetailsSectionHeader: {
-            cell = [TAResultsCell headerCell];
-            break;
-        }
-        
-        case TAPOIDetailsSectionName: {
-            cell = [TAResultsCell sectionNameCell];
-            break;
-        }
-            
-        case TAPOIDetailsSectionOverview: {
-            cell = [TAResultsCell overviewCell];
-            break;
-        }
-        
-        // warning: Enumeration values 'TAPOIDetailsSectionNew' and 'TAPOIDetailsSectionUnsupported' not handled in switch
-    }
-            
-    if (!cell) {
-        cell = [TAResultsCell defaultCell];
-    }
-    
-    return cell
-}
 
 
 
