@@ -43,6 +43,8 @@ Prefer dot-notation for getting and setting properties of objects. Use brackets 
 ## Spacing
 Take advantage of spaces to improve readability, follow Apple examples where available.
 
+Indent using 4 spaces. Avoid Tabs (change this preference in Xcode, otherwise you will have to deal with strange merge conflicts and misaligned code reviews)
+
 **Example**
 
 ```objc
@@ -65,6 +67,11 @@ Take advantage of spaces to improve readability, follow Apple examples where ava
 > The -/+ should be the first character of the line, followed by a space. 
 > There should be no spaces within the return type (void), or between the type and the method name.
 
+## Structure / Grouping Code
+- TBD
+- Keep like methods together, in an expected order (inits at the top, deallocs there as well, all view helpers together)
+- Group and separate code areas with `#pragma` marks
+
 ## Conditionals
 
 TBD
@@ -73,6 +80,7 @@ TBD
 - Proper spacing before ()
 - Don't compare against nil, or 0
 - for strings, arrays, check length count
+- For short statements, keep simple w/ 1 line (but avoid lacking braces and putting result on a separate line)
 
 **Example**
 
@@ -101,6 +109,8 @@ Prefer literals where you can for `arrays`, `dictionaries`, and `NSNumbers`. Be 
 ```objc
 NSArray *array = @[@1, @2, @3];
 NSDictionary *dictionary = @{@"key": @"value"};
+NSNumber *boolNumber = @YES;
+NSNumber *integerNumber = @100;
 
 NSUInteger number = 100;
 [array addObject:@(number)];
@@ -108,7 +118,7 @@ NSUInteger number = 100;
 
 ## Ternary Operator
 
-Take advantage of the simplicity of the Ternary Operator, but don't get too complicated. Be nice to future programmers who will try to quickly understand your work.
+Take advantage of the simplicity of the Ternary Operator, but don't get too complicated. Be nice to future programmers who will try to quickly understand your work. If it takes more then 2 seconds to understand the logic, use an if statement instead. Clarity > lines of code.
 
 **Example**
 
@@ -176,7 +186,7 @@ Prefer `NSInteger` over `int`, and `CGFloat` over `float`. When applicable, pref
 
 ## Enums
 
-Use `NS_ENUM` where possible
+Use `NS_ENUM` where possible (and NS_Option)
 
 In Switch-Case statements, avoid the use of default. By avoiding you will receive warnings when you forget to support a value in the enum, which can help to future-proof your code if someone adds a new value. In many cases, you can remove the default case and instead return the value later in the method
 
@@ -212,11 +222,38 @@ In Switch-Case statements, avoid the use of default. By avoiding you will receiv
     return cell
 }
 
+
+
 ```
 
 
 ## Singletons
+When creating singletons, be thread-safe and use `dispatch_once`
+
+**Example**
+
+```objc
++ (TALoginManager *)sharedInstance {
+    static TALoginManager *sharedInstance = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        sharedInstance = [[TALoginManager alloc] init];
+    });
+    
+    return sharedInstance;
+}
+
+```
+
 
 ## Blocks
 Prefer Weak references in blocks, this avoids potential future retain cycles, but also it's very rare we ever want to reference/update anything if it has become nil;
+
+## Exceptions and Errors
+- Check return over value of error object. use NSException to indicate programmer errors, use NSError to indicate other unexpected errors.
+
+## Categories
+- Use categories for helper methods on models (keep models clean)
+
+
 
