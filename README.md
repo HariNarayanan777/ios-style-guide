@@ -240,6 +240,7 @@ Prefer dot-notation for getting and setting properties of objects. Use brackets 
     
     return cell
 }
+```
 
 ### For / While 
 - Prefer fast enumeration where possible
