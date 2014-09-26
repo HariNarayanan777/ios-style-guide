@@ -22,7 +22,7 @@ Some references to the "Official" Documentation. We follow recommendations here 
 
 
 ## Naming
-- *Needs Owner*
+- **Needs Owner**
 - Verbosity
 - Return time and inputs should be obvious
 - Properties, put nonatomic and strong even if default
@@ -69,12 +69,12 @@ Indent using 4 spaces. Avoid Tabs (change this preference in Xcode, otherwise yo
 > There should be no spaces within the return type (void), or between the type and the method name.
 
 ## Structure / Grouping Code
-- *Needs Owner*
+- **Needs Owner**
 - Keep like methods together, in an expected order (inits at the top, deallocs there as well, all view helpers together)
 - Group and separate code areas with `#pragma` marks
 
 ## Conditionals
-- *Needs Owner*
+- **Needs Owner**
 - Braces on same line
 - Proper spacing before ()
 - Don't compare against nil, or 0
@@ -245,16 +245,16 @@ When creating singletons, be thread-safe and use `dispatch_once`
 
 
 ## Blocks
-*Needs Owner*
+**Needs Owner**
 
 - Prefer Weak references in blocks, this avoids potential future retain cycles, but also it's very rare we ever want to reference/update anything if it has become nil;
 
 ## Exceptions and Errors
-*Needs Owner*
+**Needs Owner**
 - Check return over value of error object. use NSException to indicate programmer errors, use NSError to indicate other unexpected errors.
 
 ## Categories
-*Needs Owner*
+**Needs Owner**
 - Use categories for helper methods on models (keep models clean)
 
 
