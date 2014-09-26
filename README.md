@@ -13,12 +13,23 @@ Some references to the "Official" Documentation. We follow recommendations here 
 * [Coding Guidelines for Cocoa](https://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/CodingGuidelines/CodingGuidelines.html)
 * [iOS App Programming Guide](http://developer.apple.com/library/ios/#documentation/iphone/conceptual/iphoneosprogrammingguide/Introduction/Introduction.html)
 
+
 ## Contents
+* [Organization and Documentation](#organization-and-documentation)
+* [Spacing](#spacing)
 * [Naming](#naming)
 * [Properties and Methods](#properties-and-methods)
-* [Spacing](#spacing)
-* [Conditionals](#conditionals)
+* [Control Structures](#control-structures)
 * [Literals](#literals)
+* [Ternary Operator](#ternary-operator)
+* [Designated Initializers](#designated-initializers)
+* [Constants](#constants)
+* [Types](#types)
+* [Enums](#enums)
+* [Singletons](#singletons)
+* [Blocks](#blocks)
+* [Exceptions and Errors](#exceptions-and-errors)
+* [Categories](#categories)
 
 
 ## Misc (need a home)
@@ -27,19 +38,26 @@ Some references to the "Official" Documentation. We follow recommendations here 
 - Avoid `NSLog`, prefer `RKLog` instead.
 
 
-## Organization and Organization
-- **Needs Owner**
+## Organization and Documentation
+- Include documentation on use, parameters, return values for all public methods. 
+- Use `#pragma mark` to group like pieces of code and protocol code. `init` and `dealloc` methods belong at the top.
+- Define constants at the top of the file so that they are together in a single place.
+- Where possible, order methods in a reasonable expected resembling the life cycle.
 
-All public methods and functions should have documentation on use, parameters, return values. Use `#pragma mark` to group like pieces of code and protocol code. `init` and `dealloc` methods belong at the top.
-
-Define constants at the top of the file so that they are together in a single place.
-
-Where possible, order methods in a reasonable expected resembleing the life cycle
-
-** Example **
+**Example**
 
 ```objc
+// constants
+const NSUInteger kTANumSections = 10;
+const CGFloat kTASectionHeight = 60.f;
 
+// lifecycle
+- (instancetype)init;
+- (instancetype)initWithUser:(TAUser *user);
+- (void)dealloc;
+
+
+#pragma mark - UITableViewDelegate
 - (NSUInteger)numberOfSections;
 
 - (NSUInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSUInteger)section;
@@ -51,11 +69,9 @@ Where possible, order methods in a reasonable expected resembleing the life cycl
 
 
 ## Spacing
-Take advantage of spaces to improve readability, follow Apple examples where available.
-
-Include line breaks between methods to improve readability (2).
-
-**Indent using 4 spaces. Avoid Tabs** (change this preference in Xcode, otherwise you will have to deal with strange merge conflicts and misaligned code reviews)
+- Take advantage of spaces to improve readability, follow Apple examples where available.
+- Include line breaks between methods to improve readability (2).
+- **Indent using 4 spaces. Avoid Tabs** (change this preference in Xcode, otherwise you will have to deal with strange merge conflicts and misaligned code reviews)
 
 **Example**
 
@@ -89,10 +105,7 @@ NSUInteger number = (1 + 2) * 3;
 NSArray *array = @[@"one", @"two", @"three"];
 BOOL isNegative = number >= 0 ? NO : YES;
 
-
 ```
-
-
 
 
 ## Naming
@@ -131,7 +144,6 @@ Prefer dot-notation for getting and setting properties of objects. Use brackets 
 
 
 
-
 ## Control Structures
 - Always include a space after control structure, before (
 - Braces start on same line, end on a new line.
@@ -161,7 +173,6 @@ Prefer dot-notation for getting and setting properties of objects. Use brackets 
 
 
 ### If / Else
-
 - Don't compare against nil, or 0
 - for strings, arrays, check length count
 - For short statements, keep simple w/ 1 line (but avoid lacking braces and putting result on a separate line)
@@ -170,10 +181,13 @@ Prefer dot-notation for getting and setting properties of objects. Use brackets 
 
 ```objc
 - (BOOL)myTestMethodForInput:(NSString *)input {
+    // simple case
+    if (!input.length) return NO;
     
-    if (input.length) {
+    
+    if (![array count]) {
         
-    } else if ([array count]) {
+    } else if ([array count] > 10) {
         
     } else {
         
@@ -184,11 +198,9 @@ Prefer dot-notation for getting and setting properties of objects. Use brackets 
 ```
 
 ### Switch
-Include braces around cases.
+- Avoid the use of `default` when dealing with `ENUMs`. By avoiding you will receive warnings when you forget to support a value in the enum, which can help to future-proof your code if someone adds a new value. Instead, group cases together and handle default case explicitly there.
+- Include braces around cases for consistency
 
-Avoid the use of `default` when dealing with `ENUMs`. By avoiding you will receive warnings when you forget to support a value in the enum, which can help to future-proof your code if someone adds a new value. Instead, group cases together and handle default case explicitly there.
-
-I
 
 **Example**
 
@@ -231,21 +243,18 @@ I
 }
 
 ### For / While 
-
-Prefer fast enumueration where possible
+- Prefer fast enumeration where possible
 
 ```objc
 for (TAReview *review in location.reviews) {
     // do stuff here
 }
-````
-
+```
 
 
 ## Literals
-Prefer literals where you can for `arrays`, `dictionaries`, and `NSNumbers`. Be careful about accidental nil inserts that can cause crashes.
-
-For dictionaries, no space between " and : in key, include a space after : before value.
+- Prefer literals for `arrays`, `dictionaries`, and `NSNumbers`. Be careful about accidental nil inserts that can cause crashes.
+- For dictionaries, no space between " and : in key, include a space after : before value.
 
 **Example**
 
@@ -260,10 +269,8 @@ NSUInteger number = 100;
 ```
 
 ## Ternary Operator
-
-Take advantage of the simplicity of the Ternary Operator, but don't get too complicated. Be nice to future programmers who will try to quickly understand your work. If it takes more then 2 seconds to understand the logic, use an if statement instead. Clarity > lines of code.
-
-Wrap long lines in parenthesis to improve clarity.
+- Take advantage of the simplicity of the Ternary Operator, but don't get too complicated. Be nice to future programmers who will try to quickly understand your work. If it takes more then 2 seconds to understand the logic, use an if statement instead. Clarity > lines of code.
+- Wrap long lines in parenthesis to improve clarity.
 
 **Example**
 
@@ -278,8 +285,8 @@ return self.user.name ?: @"A TripAdvisor Member";
 
 
 ## Designated Initializers
-
-Protect yourself and your code. If you have a required parameter in an initializer and it is not present, warn the developer using an `NSInvalidArgumentException`. Return `nil` as well when you want to avoid moving forward in a bad state
+- Protect yourself and your code. If you have a required parameter in an initializer and it is not present, warn the developer using an `NSInvalidArgumentException`. 
+- Return `nil` as well when you want to avoid moving forward in a bad state
 
 **Example**
 ```objc
@@ -300,8 +307,8 @@ Protect yourself and your code. If you have a required parameter in an initializ
 
 
 ## Constants
-
-Prefer `static const`  over `#define`. For public constants, prefix with TA and the name of the class where relevant. For private/internal constants, prefix with kTA.
+- Prefer `static const`  over `#define`. 
+- For public constants, prefix with TA and the name of the class where relevant. For private/internal constants, prefix with kTA.
 
 **Example**
 
@@ -323,24 +330,26 @@ static const CGFLoat kTAExamplePrivateConstant = 10.5;
 
 
 ## Types
-
-Prefer `NSInteger` over `int`, and `CGFloat` over `float`. When applicable, prefer `NSUInteger` over `NSInteger`
-
-Prefer `typedef` when applicable, such as `NSTimeInterval` over `double`.
+- Prefer `NSInteger` over `int`, and `CGFloat` over `float`. When applicable, prefer `NSUInteger` over `NSInteger`
+- Prefer `typedef` when applicable, such as `NSTimeInterval` over `double`.
 
 
 ## Enums
-Use `NS_ENUM` where possible (and NS_Option)
+- Use `NS_ENUM` where possible (and `NS_OPTIONS`)
 
+**Example**
 
-
-
-
+```objc
+typedef NS_ENUM(NSUInteger, TAAttractionSubType) {
+    TAAttractionSubTypeAttraction,
+    TAAttractionSubTypeShopping,
+    TAAttractionSubTypeNightlife,
+    TAAttractionSubTypeActivities,
+};
 ```
 
-
 ## Singletons
-When creating singletons, be thread-safe and use `dispatch_once`
+- When creating singletons, be thread-safe and use `dispatch_once`
 
 **Example**
 
@@ -365,10 +374,12 @@ When creating singletons, be thread-safe and use `dispatch_once`
 
 ## Exceptions and Errors
 **Needs Owner**
+
 - Check return over value of error object. use NSException to indicate programmer errors, use NSError to indicate other unexpected errors.
 
 ## Categories
 **Needs Owner**
+
 - Use categories for helper methods on models (keep models clean)
 
 
