@@ -18,7 +18,7 @@ Some references to the "Official" Documentation. We follow recommendations here 
 * [Organization and Documentation](#organization-and-documentation)
 * [Spacing](#spacing)
 * [Naming](#naming)
-* [Properties and Methods](#properties-and-methods)
+* [Properties](#properties)
 * [Control Structures](#control-structures)
 * [Literals](#literals)
 * [Ternary Operator](#ternary-operator)
@@ -72,6 +72,7 @@ const CGFloat kTASectionHeight = 60.f;
 - Take advantage of spaces to improve readability, follow Apple examples where available.
 - Include line breaks between methods to improve readability (2).
 - **Indent using 4 spaces. Avoid Tabs** (change this preference in Xcode, otherwise you will have to deal with strange merge conflicts and misaligned code reviews)
+- Start braces on the same line (for `ta-ios-flights` pod, method braces start on the next line, control structures on the same line)
 
 **Example**
 
@@ -114,8 +115,7 @@ BOOL isNegative = number >= 0 ? NO : YES;
 - Prefix Classes with `TA`, `TAC` (commons), `TAF` (flights) (and methods and constants where needed).
 - Avoid abbreviations other than common ones (num, max, min).
 
-## Properties and Methods
-
+## Properties
 - Use `copy` for types with mutable options (ie NSArray, NSDictionary, NSString). Protect yourself against the wrong type being passed in.
 - Expose the immutable type when possible.
 - Make use of `readonly` where applicable to force immutability
@@ -130,7 +130,6 @@ BOOL isNegative = number >= 0 ? NO : YES;
 @property (nonatomic, assign, getter=isSaved) BOOL saved;
 
 ```
-
 
 Prefer dot-notation for getting and setting properties of objects. Use brackets for methods.
 
