@@ -179,14 +179,14 @@ Prefer dot-notation for getting and setting properties of objects. Use brackets 
 **Example**
 
 ```objc
-- (BOOL)myTestMethodForInput:(NSString *)input {
+- (BOOL)myTestMethodForInput:(NSString *)input andList:(NSArray *)list {
     // simple case
     if (!input.length) return NO;
     
-    
-    if (![array count]) {
+    NSUInteger listCount = [list count];
+    if (!listCount) {
         
-    } else if ([array count] > 10) {
+    } else if (listCount >= 10) {
         
     } else {
         
