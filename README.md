@@ -149,7 +149,7 @@ Prefer dot-notation for getting and setting properties of objects. Use brackets 
 - Return early. Prefer a negative condition to return over several layers of nested `if` when possible
 - No spaces between parenthesis and their contents inside.
 
-** Prefer **
+**Prefer**
 ```objc
 - (void)preformSomeMethodWithString:(NSString *)string {
     if (!string.length) return;
@@ -158,7 +158,7 @@ Prefer dot-notation for getting and setting properties of objects. Use brackets 
 }
 ```
 
-** Over ** 
+**Over** 
 ```objc
 - (void)preformSomeMethodWithString:(NSString *)string {
     if (string.length) {
@@ -327,6 +327,8 @@ static const CGFLoat kTAExamplePrivateConstant = 10.5;
 
 > Using constants gives better information about the type, and helps to avoid simple mistakes
 > The use if kTA vs. TA makes the scope of the constant more obvious. In general, the more obvious the better.
+>
+> Note: `NSString * const` does not follow normal variable naming, which has no space between * and const. This is an exception here introduced by Apple, and we follow Apple's example in this case.
 
 
 ## Types
